@@ -106,6 +106,7 @@ baseTypes.forEach(typeId => {
 
 }
 
+
 function updateSecondaryInfo() {
     const selectedId = document.getElementById('secondarySelect').value;
     const secondaryData = items.find(p => p.row == selectedId);
@@ -167,6 +168,10 @@ function populateAbilities(elementId, data) {
     new TomSelect(`#${elementId}`);
 }
 
+
+function getRowFromName(name) {
+    return Object.keys(fidToName).find(key => fidToName[key] === name);
+}
 function updateFusionInfo() {
     const baseId = document.getElementById('baseSelect').value;
     const secondaryId = document.getElementById('secondarySelect').value;
@@ -174,6 +179,9 @@ function updateFusionInfo() {
 
     const baseData = items.find(p => p.row == baseId);
     const secondaryData = items.find(p => p.row == secondaryId);
+
+    console.log("Base Pokémon Row:", baseData.row, "Name:", getNameFromId(baseData.row));
+    console.log("Secondary Pokémon Row:", secondaryData.row, "Name:", getNameFromId(secondaryData.row));
 
     const avg = (a, b) => Math.round((a + b) / 2);
 
@@ -187,40 +195,42 @@ function updateFusionInfo() {
     document.getElementById('fusedSpDef').innerText = avg(baseData.spd, secondaryData.spd);
     document.getElementById('fusedSpe').innerText = avg(baseData.spe, secondaryData.spe);
 
+    // Dynamically find Shedinja's row value and check
+    if (baseData.row == 364 || secondaryData.row == 364) {
+      document.getElementById('fusedHP').innerText = 1;
+    }
+
     document.getElementById('fusedAbility').innerText = getAbilityName(secondaryData.a1);
     document.getElementById('fusedPassive').innerText = getAbilityName(baseData.pa);
     document.getElementById('fusedNature').innerText = document.getElementById('baseNature').value;
 
-    
+    const fusionAbility = document.getElementById('secondaryAbility')?.value;
+    document.getElementById('fusedAbility').innerText = getAbilityName(fusionAbility);
 
-const fusionAbility = document.getElementById('secondaryAbility')?.value;
-document.getElementById('fusedAbility').innerText = getAbilityName(fusionAbility);
+    const fusionNature = document.getElementById('baseNature')?.value;
+    document.getElementById('fusedNature').innerText = fusionNature;
 
-const fusionNature = document.getElementById('baseNature')?.value;
-document.getElementById('fusedNature').innerText = fusionNature;
+    const fusedTypingEl = document.getElementById('fusedTyping');
+    fusedTypingEl.innerHTML = '';
+    const fusionPrimaryType = getTypeName(baseData.t1);
+    const fusionSecondaryType = determineSecondaryType(baseData, secondaryData);
+    [fusionPrimaryType, fusionSecondaryType].forEach(typeName => {
+        if (typeName) {
+            const span = document.createElement('span');
+            span.textContent = typeName;
+            span.style.backgroundColor = window.typeColors?.[typeName] || '#777';
+            fusedTypingEl.appendChild(span);
+        }
+    });
 
-const fusedTypingEl = document.getElementById('fusedTyping');
-fusedTypingEl.innerHTML = '';
-const fusionPrimaryType = getTypeName(baseData.t1);
-const fusionSecondaryType = determineSecondaryType(baseData, secondaryData);
-[fusionPrimaryType, fusionSecondaryType].forEach(typeName => {
-    if (typeName) { // Skip nulls to avoid duplicate typings
-        const span = document.createElement('span');
-        span.textContent = typeName;
-        span.style.backgroundColor = window.typeColors?.[typeName] || '#777';
-        fusedTypingEl.appendChild(span);
-    }
-});
+    const fusionTypes = [getTypeName(baseData.t1)];
+    const secondaryType = determineSecondaryType(baseData, secondaryData);
+    if (secondaryType) fusionTypes.push(secondaryType);
 
-const fusionTypes = [getTypeName(baseData.t1)];
-const secondaryType = determineSecondaryType(baseData, secondaryData);
-if (secondaryType) fusionTypes.push(secondaryType);
+    const selectedAbility = getAbilityName(document.getElementById('secondaryAbility')?.value);
+    const multipliers = calculateEffectiveness(fusionTypes, selectedAbility);
 
-const selectedAbility = getAbilityName(document.getElementById('secondaryAbility')?.value);
-const multipliers = calculateEffectiveness(fusionTypes, selectedAbility);
-
-displayMultipliers(multipliers);
-
+    displayMultipliers(multipliers);
 }
 
 
@@ -350,5 +360,3 @@ function displayMultipliers(multipliers) {
         }
     });
 }
-
-

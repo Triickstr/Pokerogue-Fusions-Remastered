@@ -10,10 +10,25 @@
     <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
     <script src="en.js"></script>
     <script src="pokedex_data.js"></script>
+    <script>
+    async function loadCharts() {
+        const [typeResponse, abilityResponse] = await Promise.all([
+            fetch('TypeChart.json'),
+            fetch('AbilityChart.json')
+        ]);
+
+        window.TypeChart = await typeResponse.json();
+        window.AbilityChart = await abilityResponse.json();
+    }
+
+    // Load charts before anything else runs
+    loadCharts();
+    </script>
     <script src="main.js" defer></script>
 </head>
 <body>
     <div class="container">
+        <div class="pokemon-container">
         <div class="pokemon-box base">
             <h2>Base Pokémon</h2>
             <div id="baseImageContainer"></div>
@@ -69,6 +84,25 @@
             <div class="passive">Passive: <span id="secondaryPassive"></span></div>
             <select id="secondaryNature"></select>
         </div>
-    </div>
+        </div>
+<div class="full-width-row">
+    <section id="damage-multipliers">
+        <h2>Type Effectiveness</h2>
+        <div class="multiplier-grid">
+            <div class="multiplier-box"><strong>4×</strong><div id="quadruple-weak-types" class="type-list"></div></div>
+            <div class="multiplier-box"><strong>3×</strong><div id="triple-weak-types" class="type-list"></div></div>
+            <div class="multiplier-box"><strong>2×</strong><div id="double-weak-types" class="type-list"></div></div>
+            <div class="multiplier-box"><strong>1.5×</strong><div id="one-half-weak-types" class="type-list"></div></div>
+            <div class="multiplier-box"><strong>1×</strong><div id="neutral-types" class="type-list"></div></div>
+            <div class="multiplier-box"><strong>0.5×</strong><div id="half-resist-types" class="type-list"></div></div>
+            <div class="multiplier-box"><strong>0.25×</strong><div id="quarter-resist-types" class="type-list"></div></div>
+            <div class="multiplier-box"><strong>0×</strong><div id="immune-types" class="type-list"></div></div>
+        </div>
+    </section>
+</div>
+</div>
+    
+
+
 </body>
 </html>

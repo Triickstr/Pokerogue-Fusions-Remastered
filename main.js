@@ -103,6 +103,7 @@ baseTypes.forEach(typeId => {
     document.getElementById('basePassive').innerText = getAbilityName(baseData.pa);
     populateAbilities('baseAbility', baseData);
     updateFusionInfo();
+
 }
 
 function updateSecondaryInfo() {
@@ -145,19 +146,24 @@ function populateAbilities(elementId, data) {
 
     abilitySelect.innerHTML = '';
 
-    if (data.a1) {
-        const option = document.createElement('option');
-        option.value = data.a1;
-        option.text = getAbilityName(data.a1);
-        abilitySelect.appendChild(option);
-    }
-    if (data.ha) {
-        const option = document.createElement('option');
-        option.value = data.ha;
-        option.text = getAbilityName(data.ha);
-        abilitySelect.appendChild(option);
-    }
+    // Dynamically collect all defined abilities (including a1, a2, a3, ha, etc.)
+    const abilities = [data.a1, data.a2, data.a3, data.ha].filter(Boolean);
 
+    // Add a default placeholder option
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.text = 'Select an Ability';
+    abilitySelect.appendChild(defaultOption);
+
+    // Populate the dropdown with all available abilities
+    abilities.forEach(abilityId => {
+        const option = document.createElement('option');
+        option.value = abilityId;
+        option.text = getAbilityName(abilityId);
+        abilitySelect.appendChild(option);
+    });
+
+    // Re-initialize TomSelect
     new TomSelect(`#${elementId}`);
 }
 
@@ -206,6 +212,15 @@ const fusionSecondaryType = determineSecondaryType(baseData, secondaryData);
     }
 });
 
+const fusionTypes = [getTypeName(baseData.t1)];
+const secondaryType = determineSecondaryType(baseData, secondaryData);
+if (secondaryType) fusionTypes.push(secondaryType);
+
+const selectedAbility = getAbilityName(document.getElementById('secondaryAbility')?.value);
+const multipliers = calculateEffectiveness(fusionTypes, selectedAbility);
+
+displayMultipliers(multipliers);
+
 }
 
 
@@ -233,3 +248,107 @@ function determineSecondaryType(base, secondary) {
 
 
 document.addEventListener('DOMContentLoaded', initDropdowns);
+
+function calculateEffectiveness(fusionTypes, ability) {
+    const typeChart = window.TypeChart;
+    const abilityChart = window.AbilityChart;
+    const allTypes = Object.keys(typeChart);
+
+    const multipliers = {};
+
+allTypes.forEach(attackingType => {
+    const normalizedAttackingType = attackingType.charAt(0).toUpperCase() + attackingType.slice(1).toLowerCase();
+    let multiplier = 1;
+
+    fusionTypes.forEach(defType => {
+        const defChart = typeChart[defType];
+        if (defChart) {
+            for (const [mult, types] of Object.entries(defChart)) {
+                if (types.includes(normalizedAttackingType)) {
+                    multiplier *= parseFloat(mult);
+                }
+            }
+        }
+    });
+
+    if (abilityChart[ability]) {
+        for (const [mult, types] of Object.entries(abilityChart[ability])) {
+            if (types.includes(normalizedAttackingType)) {
+                multiplier = parseFloat(mult);
+            }
+        }
+    }
+
+    multipliers[normalizedAttackingType] = multiplier;
+});
+
+if (ability === "Delta Stream" && fusionTypes.includes("Flying")) {
+    const affectedTypes = ["Rock", "Electric", "Ice"];
+    Object.keys(multipliers).forEach(type => {
+        if (affectedTypes.includes(type)) {
+            const currentMultiplier = multipliers[type];
+            if (currentMultiplier === 4) {
+                multipliers[type] = 2;
+            } else if (currentMultiplier === 2) {
+                multipliers[type] = 1;
+            } else if (currentMultiplier === 1) {
+                multipliers[type] = 0.5;
+            } else if (currentMultiplier === 0.5) {
+                multipliers[type] = 0.25;
+            }
+        }
+    });
+}
+
+    if (ability === "Wonder Guard") {
+        Object.keys(multipliers).forEach(type => {
+            if (multipliers[type] < 2) {
+                multipliers[type] = 0;
+            }
+        });
+    }
+
+    if (["Filter", "Solid Rock", "Prism Armor"].includes(ability)) {
+        Object.keys(multipliers).forEach(type => {
+            if (multipliers[type] === 2) multipliers[type] = 1.5;
+            if (multipliers[type] === 4) multipliers[type] = 3;
+        });
+    }
+
+    return multipliers;
+}
+
+function displayMultipliers(multipliers) {
+    const multiplierGroups = {
+    "0": "immune-types",
+    "0.25": "quarter-resist-types",
+    "0.5": "half-resist-types",
+    "1": "neutral-types",
+    "1.5": "one-half-weak-types",
+    "2": "double-weak-types",
+    "3": "triple-weak-types",
+    "4": "quadruple-weak-types"
+    };
+
+    // Clear previous results and ensure span exists
+    Object.values(multiplierGroups).forEach(id => {
+        const container = document.getElementById(id);
+        if (container) container.innerHTML = ''; // Clear entire container instead of just span
+    });
+
+    // Group and display results vertically with background colors
+    Object.entries(multipliers).forEach(([type, value]) => {
+        const groupId = multiplierGroups[value.toString()];
+        const container = document.getElementById(groupId);
+        if (container) {
+            const displayType = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+            const typeElement = document.createElement('div');
+            typeElement.className = 'type-badge';
+            typeElement.innerText = displayType;
+            typeElement.style.backgroundColor = window.typeColors?.[displayType] || '#777';
+            container.appendChild(typeElement);
+        }
+    });
+}
+
+

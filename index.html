@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeRogue Fusion Calculator</title>
+    <link href="styles.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+    <script src="en.js"></script>
+    <script src="pokedex_data.js"></script>
+    <script src="main.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <div class="pokemon-box base">
+            <h2>Base Pokémon</h2>
+            <div id="baseImageContainer"></div>
+            <select id="baseSelect"></select>
+            <div id="baseTyping" class="typing"></div>
+            <div class="stats">
+                <div>HP: <span id="baseHP"></span></div>
+                <div>Atk: <span id="baseAtk"></span></div>
+                <div>Sp Atk: <span id="baseSpAtk"></span></div>
+                <div>Def: <span id="baseDef"></span></div>
+                <div>Sp Def: <span id="baseSpDef"></span></div>
+                <div>Spe: <span id="baseSpe"></span></div>
+            </div>
+            <select id="baseAbility"></select>
+            <div class="passive">Passive: <span id="basePassive"></span></div>
+            <select id="baseNature"></select>
+        </div>
+
+        <div class="pokemon-box fusion">
+            <h2>Fused Pokémon</h2>
+            <div class="fusion-images">
+                <img id="fusedBaseImg" class="fusion-img">
+                <img id="fusedSecondaryImg" class="fusion-img">
+            </div>
+            <div id="fusedTyping" class="typing"></div>
+            <div class="stats">
+                <div>HP: <span id="fusedHP"></span></div>
+                <div>Atk: <span id="fusedAtk"></span></div>
+                <div>Sp Atk: <span id="fusedSpAtk"></span></div>
+                <div>Def: <span id="fusedDef"></span></div>
+                <div>Sp Def: <span id="fusedSpDef"></span></div>
+                <div>Spe: <span id="fusedSpe"></span></div>
+            </div>
+            <div>Ability: <span id="fusedAbility"></span></div>
+            <div class="passive">Passive: <span id="fusedPassive"></span></div>
+            <div>Nature: <span id="fusedNature"></span></div>
+        </div>
+
+        <div class="pokemon-box secondary">
+            <h2>Secondary Pokémon</h2>
+            <div id="secondaryImageContainer"></div>
+            <select id="secondarySelect"></select>
+            <div id="secondaryTyping" class="typing"></div>
+            <div class="stats">
+                <div>HP: <span id="secondaryHP"></span></div>
+                <div>Atk: <span id="secondaryAtk"></span></div>
+                <div>Sp Atk: <span id="secondarySpAtk"></span></div>
+                <div>Def: <span id="secondaryDef"></span></div>
+                <div>Sp Def: <span id="secondarySpDef"></span></div>
+                <div>Spe: <span id="secondarySpe"></span></div>
+            </div>
+            <select id="secondaryAbility"></select>
+            <div class="passive">Passive: <span id="secondaryPassive"></span></div>
+            <select id="secondaryNature"></select>
+        </div>
+    </div>
+</body>
+</html>

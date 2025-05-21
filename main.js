@@ -318,10 +318,10 @@ if (ability === "Delta Stream" && fusionTypes.includes("Flying")) {
         });
     }
       if (ability === "Tera Shell") {
+          Object.keys(multipliers).forEach(type => {
                 multipliers[type] = 0.5;
-            }
-        });
-    }
+            });
+      }
 
 
     if (["Filter", "Solid Rock", "Prism Armor"].includes(ability)) {

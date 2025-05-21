@@ -127,12 +127,14 @@
         "2x": [],
         "1x": [],
         "0.5x": [
-            "ALL"
+            "Normal", "Fire", "Water", "Electric", "Grass", "Ice", "Fighting", "Poison",
+            "Ground", "Flying", "Psychic", "Bug", "Rock", "Ghost", "Dragon", "Dark",
+            "Steel", "Fairy"
         ],
         "0.25x": [],
         "0x": []
     },
-    "Well-Baked Body": {
+    "Well Baked Body": {
         "4x": [],
         "2x": [],
         "1x": [],
